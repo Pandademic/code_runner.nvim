@@ -24,6 +24,7 @@ M.setup = function(user_options)
   command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
   command! RunFile lua require('code_runner').run_filetype()
   command! RunProject lua require('code_runner').run_project()
+  command! RunFloat lua require('code_runner.float_run').show()
   ]],
     false
   )
