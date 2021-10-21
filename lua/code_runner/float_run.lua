@@ -5,6 +5,28 @@ local fn = vim.fn
 
 local M = {}
 
+local function processLayout()
+    local cl = vim.o.columns
+    local ln = vim.o.lines
+
+    -- calculate our floating window size
+    local width = math.ceil(cl * .8 )
+    local height = math.ceil(ln * .8 - 4)
+
+    -- and its starting position
+    local col = math.ceil((cl - width) * .5 )
+    local row = math.ceil((ln - height) * .5 - 1)
+
+    fwin.layout = {
+        width = width,
+        height = height,
+        col = col,
+        row = row
+    }
+end
+
+processLayout()
+
 function M.new_buf()
     fwin.buf = api.nvim_create_buf(false, true)
     api.nvim_buf_set_option(fwin.buf, 'filetype', 'CodeRunner')
@@ -15,10 +37,10 @@ function M.new_win()
         relative = "editor",
         style = "minimal",
         border = "rounded",
-        width = 15,
-        height = 15,
-        col = .8,
-        row = .8
+        width = fwin.layout.width,
+        height = fwin.layout.height,
+        col = fwin.layout.col,
+        row = fwin.layout.row
     })
     api.nvim_win_set_option(fwin.win, "winhl", "Normal:".. "NONE")
 end
