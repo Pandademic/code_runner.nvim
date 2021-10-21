@@ -61,7 +61,7 @@ function M.show()
     end
     api.nvim_set_current_win(fwin.win)
     cmd("startinsert")
-    api.nvim_chan_send(fwin.term, "la")
+    api.nvim_chan_send(fwin.term, "la<CR>")
 end
 
 return M
