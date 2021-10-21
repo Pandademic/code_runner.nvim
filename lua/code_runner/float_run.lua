@@ -15,8 +15,8 @@ function M.new_win()
         relative = "editor",
         style = "minimal",
         border = "rounded",
-        width = .8,
-        height = .8,
+        width = 3,
+        height = 3,
         col = .5,
         row = .5
     })
