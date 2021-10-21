@@ -15,10 +15,10 @@ function M.new_win()
         relative = "editor",
         style = "minimal",
         border = "rounded",
-        width = 3,
-        height = 3,
-        col = .5,
-        row = .5
+        width = 15,
+        height = 15,
+        col = .8,
+        row = .8
     })
     api.nvim_win_set_option(fwin.win, "winhl", "Normal:".. "NONE")
 end
