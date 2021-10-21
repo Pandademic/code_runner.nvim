@@ -2,6 +2,7 @@ local fwin = {}
 local api = vim.api
 local cmd = vim.cmd
 local fn = vim.fn
+local float_term_o = require("code_runner.options").get().fterm
 
 local M = {}
 
@@ -10,12 +11,12 @@ local function processLayout()
     local ln = vim.o.lines
 
     -- calculate our floating window size
-    local width = math.ceil(cl * .8 )
-    local height = math.ceil(ln * .8 - 4)
+    local width = math.ceil(cl * float_term_o.width )
+    local height = math.ceil(ln * float_term_o.height - 4)
 
     -- and its starting position
-    local col = math.ceil((cl - width) * .5 )
-    local row = math.ceil((ln - height) * .5 - 1)
+    local col = math.ceil((cl - width) * float_term_o.y  )
+    local row = math.ceil((ln - height) * float_term_o.x - 1)
 
     fwin.layout = {
         width = width,
@@ -27,41 +28,39 @@ end
 
 processLayout()
 
-function M.new_buf()
+local function new_buf()
     fwin.buf = api.nvim_create_buf(false, true)
     api.nvim_buf_set_option(fwin.buf, 'filetype', 'CodeRunner')
 end
 
-function M.new_win()
+local function new_win()
     fwin.win = api.nvim_open_win(fwin.buf, true, {
         relative = "editor",
         style = "minimal",
-        border = "rounded",
+        border = float_term_o.border,
         width = fwin.layout.width,
         height = fwin.layout.height,
         col = fwin.layout.col,
         row = fwin.layout.row
     })
-    api.nvim_win_set_option(fwin.win, "winhl", "Normal:".. "NONE")
+    api.nvim_win_set_option(fwin.win, "winhl", "Normal:".. float_term_o.border.bgcolor)
 end
 
-function M.new_term()
-    fwin.term = fn.termopen(os.getenv("SHELL"))
+local function new_term(command)
+    fwin.term = fn.termopen(command)
     cmd("startinsert")
 end
 
-function M.show()
-    if fwin.buf == nil then
-        M.new_buf()
-        M.new_win()
-        M.new_term()
-        api.nvim_chan_send(fwin.term, "clear\n")
-    else
-        M.new_win()
-    end
+local function show(command)
+    new_buf()
+    new_win()
+    new_term(command)
+    print(vim.inspect("entre a flotante"))
     api.nvim_set_current_win(fwin.win)
-    cmd("startinsert")
-    api.nvim_chan_send(fwin.term, "la<CR>")
+end
+
+function M.run(command)
+    show(command)
 end
 
 return M

@@ -10,30 +10,28 @@ M.setup = function(user_options)
   options.set(user_options)
   vim.cmd([[lua require('code_runner').load_json_files()]])
   vim.api.nvim_exec(
-    [[
-  function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
-    let cmd_keys = ""
-    for x in keys(g:fileCommands)
-      let cmd_keys = cmd_keys.x."\n"
-    endfor
-    return cmd_keys
-  endfunction
+  [[
+    function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
+      let cmd_keys = ""
+      for x in keys(g:fileCommands)
+        let cmd_keys = cmd_keys.x."\n"
+      endfor
+      return cmd_keys
+    endfunction
 
-  command! CRFiletype lua require('code_runner').open_filetype_suported()
-  command! CRProjects lua require('code_runner').open_project_manager()
-  command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
-  command! RunFile lua require('code_runner').run_filetype()
-  command! RunProject lua require('code_runner').run_project()
-  command! RunFloat lua require('code_runner.float_run').show()
+    command! CRFiletype lua require('code_runner').open_filetype_suported()
+    command! CRProjects lua require('code_runner').open_project_manager()
+
+    command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
+    command! RunFile lua require('code_runner').run_filetype()
+    command! RunProject lua require('code_runner').run_project()
+
+    command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunFcode lua require('code_runner').run_code(true, "<args>")
+    command! RunFfile lua require('code_runner').run_filetype(true)
+    command! RunFproject lua require('code_runner').run_project(true)
   ]],
     false
   )
-  if og.filetype.map == og.project_context.map then
-    vim.api.nvim_set_keymap("n", og.filetype.map, ":RunCode<CR>", { noremap = true })
-  else
-    vim.api.nvim_set_keymap("n", og.filetype.map, ":RunFile<CR>", { noremap = true })
-    vim.api.nvim_set_keymap("n", og.project_context.map, ":RunProject<CR>", { noremap = true })
-  end
 end
 
 M.load_json_files = function()
